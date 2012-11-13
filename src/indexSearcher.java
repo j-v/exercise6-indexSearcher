@@ -130,6 +130,16 @@ public class indexSearcher {
 		int start = 0;
 		int end = Math.min(numTotalHits, hitsPerPage);
 
+		for(int i = 0; i < numTotalHits; i++) {
+			Document doc = searcher.doc(hits[i].doc);
+			
+			System.out.println("Document #" + (i+1) + ":");
+			System.out.println("\tURL: " + doc.get("url"));
+			System.out.println("\tTILTE: " + doc.get("title"));
+			System.out.println("\tCONTENT: " + doc.get("content"));
+			System.out.println();
+		}
+		
 		while (true) {
 			if (end > hits.length) {
 				System.out
