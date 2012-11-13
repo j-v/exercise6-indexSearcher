@@ -30,12 +30,12 @@ public class indexSearcher {
 		}
 
 		String indexPath = "";
-		String field = "contents";
+		String field = "content";
 		String queries = null;
 		int repeat = 0;
-		boolean raw = false;
+		boolean raw = true;
 		String queryString = null;
-		int hitsPerPage = 10;
+		int hitsPerPage = 1;
 
 		for (int i = 0; i < args.length; i++) {
 			if ("-index".equals(args[i])) {
@@ -155,12 +155,13 @@ public class indexSearcher {
 				}
 
 				Document doc = searcher.doc(hits[i].doc);
-				String path = doc.get("path");
+				String path = doc.get("content");
 				if (path != null) {
 					System.out.println((i + 1) + ". " + path);
-					String title = doc.get("title");
+					String title = doc.get("content");
+					System.out.println(title);
 					if (title != null) {
-						System.out.println("   Title: " + doc.get("title"));
+						System.out.println("   Title: " + doc.get("content"));
 					}
 				} else {
 					System.out.println((i + 1) + ". "
