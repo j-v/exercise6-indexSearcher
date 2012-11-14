@@ -10,6 +10,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TotalHitCountCollector;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -18,7 +19,7 @@ public class indexSearcher {
 
 	/** Simple command-line based search demo. */
 	public static void main(String[] args) throws Exception {
-		String usage = "Usage:\njava -jar indexSearcher -index dir -query string";
+		String usage = "Usage:\njava -jar indexSearcher -index dir -query string -max <num of docs to show>";
 		if (args.length > 0
 				&& ("-h".equals(args[0]) || "-help".equals(args[0]))) {
 			System.out.println(usage);
@@ -28,6 +29,7 @@ public class indexSearcher {
 		String indexPath = "";
 		String field = "content";
 		String queryString = null;
+		int maxDocs = 100;
 
 		for (int i = 0; i < args.length; i++) {
 			if ("-index".equals(args[i])) {
@@ -36,6 +38,19 @@ public class indexSearcher {
 			} else if ("-query".equals(args[i])) {
 				queryString = args[i + 1];
 				i++;
+			} else if ("-max".equals(args[i])) {
+				try {
+					maxDocs = Integer.parseInt(args[i + 1]);
+					if(maxDocs <= 0) {
+						System.out.println("Please use a >0 number for -max");
+						System.exit(1);
+					}
+					i++;
+				} catch (NumberFormatException e) {
+					System.out.println("Please use a >0 number for -max");
+					System.out.println(usage);
+					System.exit(1);
+				}
 			}
 		}
 
@@ -60,21 +75,21 @@ public class indexSearcher {
 		Query query = parser.parse(queryString);
 		System.out.println("Searching for: " + query.toString(field));
 
-		doPagingSearch(searcher, query);
+		doPagingSearch(searcher, query, maxDocs);
 
 		reader.close();
 	}
 
-	public static void doPagingSearch(IndexSearcher searcher, Query query) throws IOException {
+	public static void doPagingSearch(IndexSearcher searcher, Query query, int maxDocs) throws IOException {
 
 		// Collect enough docs to show 5 pages
-		TopDocs results = searcher.search(query, 5);
+		TopDocs results = searcher.search(query, maxDocs);
 		ScoreDoc[] hits = results.scoreDocs;
 
 		int numTotalHits = results.totalHits;
 		System.out.println(numTotalHits + " total matching documents");
 
-		for(int i = 0; i < numTotalHits; i++) {
+		for(int i = 0; i < numTotalHits && i < maxDocs; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			
 			System.out.println("Document #" + (i+1) + " (score = " + hits[i].score + "):");
