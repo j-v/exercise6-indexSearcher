@@ -1,4 +1,4 @@
-exercise3-indexSearcher
+exercise4-indexSearcher
 =======================
 
-exercise3 index seacher
+exercise4 index seacher
