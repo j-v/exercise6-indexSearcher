@@ -96,6 +96,7 @@ public class indexSearcher {
 			System.out.println("\tURL: " + doc.get("url"));
 			System.out.println("\tTILTE: " + doc.get("title"));
 			System.out.println("\tCONTENT: " + doc.get("content"));
+			System.out.println("\tPAGERANK: " + doc.get("pagerank"));
 			System.out.println();
 		}
 	}
